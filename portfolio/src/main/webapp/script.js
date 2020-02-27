@@ -44,3 +44,9 @@ function addRandomQuote() {
   // Add it to the page.
   quoteContainer.innerText = quote;
 }
+
+function getHelloName() {
+  fetch('/data').then(response => response.text()).then( (hello) => {
+        document.getElementById('hello-container').innerText = hello;
+    } );
+}
