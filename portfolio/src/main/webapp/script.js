@@ -45,8 +45,20 @@ function addRandomQuote() {
   quoteContainer.innerText = quote;
 }
 
-function getHelloName() {
-  fetch('/data').then(response => response.text()).then( (hello) => {
-        document.getElementById('hello-container').innerText = hello;
-    } );
+function getServerData() { //examples/stats-server
+    fetch('/data').then(response => response.json()).then((strings) => {
+        const serverListElement = document.getElementById('server-container');
+        serverListElement.innerHTML = '';
+        serverListElement.appendChild(createListElement(strings[0]));
+        serverListElement.appendChild(createListElement(strings[1]));
+        serverListElement.appendChild(createListElement(strings[2]));
+    });
 }
+
+
+function createListElement(text) { //examples/stats-server
+    const liElement = document.createElement('li');
+    liElement.innerText = text;
+    return liElement;
+}
+
