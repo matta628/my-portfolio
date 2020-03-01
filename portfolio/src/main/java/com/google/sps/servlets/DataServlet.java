@@ -17,6 +17,8 @@ package com.google.sps.servlets;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
 import com.google.gson.Gson;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
@@ -31,11 +33,22 @@ import java.util.ArrayList;
     public class DataServlet extends HttpServlet {
     
     List<String> comments = new ArrayList<>();
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        
+        Query query = new Query("Comment");
+        PreparedQuery results = datastore.prepare(query);
+        
+        List<String> texts = new ArrayList<>();
+        for (Entity entity : results.asIterable()) {
+            String text = (String) entity.getProperty("text");
+            texts.add(text);    
+        }
+        
         Gson gson = new Gson();
-        String json = gson.toJson(comments);
+        String json = gson.toJson(texts);
         response.setContentType("application/json;");
         response.getWriter().println(json);
     }
@@ -48,7 +61,6 @@ import java.util.ArrayList;
 
         Entity commentEntity = new Entity("Comment");
         commentEntity.setProperty("text", text);
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         datastore.put(commentEntity);
 
         response.sendRedirect("/index.html");
