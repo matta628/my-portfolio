@@ -6,7 +6,7 @@
         <link rel="stylesheet" href="style.css">
         <script src="script.js"></script>
     </head>
-    <body>
+    <body onload="getComments()">
         <div id="content">
             <h1>Matt Aguilar's Portfolio</h1>
             <br>
@@ -99,9 +99,18 @@
                 <img src="images/threethree.jpg"> 
 -->                                                          
             </div> 
-            <button onclick="getServerData()">Fetch Json!</button>
-            <div id="server-container"></div>           
-            <br>    
+            <br>
+  
+            <form action="/data" method="POST">
+                <p>Leave a Comment:</p>
+                <textarea name="comment-input">plz b nice ^_^</textarea>
+                <br/><br/>
+                <input type="submit" />
+            </form>
+            <p>All Comments:</p>
+            <div id="comment-container"></div>  
+            <br>         
+
         </div>
     </body>
 </html>
