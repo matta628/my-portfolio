@@ -21,6 +21,7 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.gson.Gson;
 import java.io.IOException;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -34,7 +35,7 @@ import java.util.ArrayList;
     
     List<String> comments = new ArrayList<>();
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-
+            
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         
