@@ -49,16 +49,12 @@ function getComments() { //examples/stats-server
     var loggedIn = false;
     fetch('/login').then(response => response.json()).then((bool) =>{
         loggedIn = bool;
-        console.log("1. loggedIn " + loggedIn);
         if (loggedIn === true){
-            console.log("2. loggedIn " + loggedIn);
             fetch('/data').then(response => response.json()).then((strings) => {
-                console.log("in fetch /data");
                 const commentListElement = document.getElementById('comment-container');
                 commentListElement.innerHTML = '';
                 strings.forEach((line) => {
-                    commentListElement.appendChild(createListElement(line));
-                    console.log(line);
+                    commentListElement.appendChild(createListElement(line[0],line[1]));
                 });
             });
         }
@@ -71,9 +67,9 @@ function getComments() { //examples/stats-server
 
 }
 
-function createListElement(text) { //examples/stats-server
+function createListElement(email, text) { //examples/stats-server
     const liElement = document.createElement('li');
-    liElement.innerText = text;
+    liElement.innerText = email + ": " + text;
     return liElement;
 }
 
