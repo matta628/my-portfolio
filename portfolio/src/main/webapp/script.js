@@ -46,13 +46,29 @@ function addRandomQuote() {
 }
 
 function getComments() { //examples/stats-server
-    fetch('/data').then(response => response.json()).then((strings) => {
-        const commentListElement = document.getElementById('comment-container');
-        commentListElement.innerHTML = '';
-        strings.forEach((line) => {
-            commentListElement.appendChild(createListElement(line));
-        });
+    var loggedIn = false;
+    fetch('/login').then(response => response.json()).then((bool) =>{
+        loggedIn = bool;
+        console.log("1. loggedIn " + loggedIn);
+        if (loggedIn === true){
+            console.log("2. loggedIn " + loggedIn);
+            fetch('/data').then(response => response.json()).then((strings) => {
+                console.log("in fetch /data");
+                const commentListElement = document.getElementById('comment-container');
+                commentListElement.innerHTML = '';
+                strings.forEach((line) => {
+                    commentListElement.appendChild(createListElement(line));
+                    console.log(line);
+                });
+            });
+        }
+        else{
+            document.getElementById("form").style.display="none";
+            document.getElementById("comment-container").style.display="none";
+        }
     });
+    
+
 }
 
 function createListElement(text) { //examples/stats-server
