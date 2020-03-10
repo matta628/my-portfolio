@@ -40,7 +40,6 @@ import java.util.ArrayList;
             
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        
         Query query = new Query("Comment");
         PreparedQuery results = datastore.prepare(query);
         
@@ -55,7 +54,6 @@ import java.util.ArrayList;
         String json = gson.toJson(cmts);
         response.setContentType("application/json;");
         response.getWriter().println(json);
-        response.sendRedirect("/index.html");
     }
 
     @Override
@@ -65,7 +63,6 @@ import java.util.ArrayList;
             response.sendRedirect("/index.html");
             return;
         }
-        
         String text = request.getParameter("comment-input");
         if (text == null) text = "don't be shy.. put some more!";
         else comments.add(text);

@@ -36,12 +36,5 @@ public class LoginServlet extends HttpServlet{
         String json = gson.toJson(logs);
         response.setContentType("application/json;");
         response.getWriter().println(json);
-        //response.sendRedirect("/index.html");
     }
-
-    @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException{
-        response.sendRedirect("/index.html");
-    }
-
 }

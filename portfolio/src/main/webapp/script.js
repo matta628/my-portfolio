@@ -45,7 +45,7 @@ function addRandomQuote() {
   quoteContainer.innerText = quote;
 }
 
-function getComments() { //examples/stats-server
+function getComments() { 
     var loggedIn = false;
     fetch('/login').then(response => response.json()).then((logs) =>{
         loggedIn = logs[0];
@@ -68,7 +68,7 @@ function getComments() { //examples/stats-server
     });
 }
 
-function createListElement(email, text) { //examples/stats-server
+function createListElement(email, text) { 
     const liElement = document.createElement('li');
     liElement.innerText = email + ": " + text;
     return liElement;
