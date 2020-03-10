@@ -25,11 +25,23 @@ public class LoginServlet extends HttpServlet{
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException{
         response.setContentType("text/html");
         UserService userService = UserServiceFactory.getUserService();
-        boolean loggedIn = userService.isUserLoggedIn();
+        String loggedIn = "";
+        if (userService.isUserLoggedIn()){
+            loggedIn = "yes";
+        }
+        String login = userService.createLoginURL("/index.html");
+        String logout = userService.createLogoutURL("/index.html");
+        String[] logs = {loggedIn, login, logout};
         Gson gson = new Gson();
-        String json = gson.toJson(loggedIn);
+        String json = gson.toJson(logs);
         response.setContentType("application/json;");
         response.getWriter().println(json);
+        //response.sendRedirect("/index.html");
+    }
+
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException{
+        response.sendRedirect("/index.html");
     }
 
 }

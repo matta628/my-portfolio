@@ -55,13 +55,14 @@ import java.util.ArrayList;
         String json = gson.toJson(cmts);
         response.setContentType("application/json;");
         response.getWriter().println(json);
+        response.sendRedirect("/index.html");
     }
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException{
         UserService userService = UserServiceFactory.getUserService();
         if (!userService.isUserLoggedIn()) {
-            response.sendRedirect("/shoutbox");
+            response.sendRedirect("/index.html");
             return;
         }
         

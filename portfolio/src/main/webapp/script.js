@@ -47,24 +47,25 @@ function addRandomQuote() {
 
 function getComments() { //examples/stats-server
     var loggedIn = false;
-    fetch('/login').then(response => response.json()).then((bool) =>{
-        loggedIn = bool;
-        if (loggedIn === true){
+    fetch('/login').then(response => response.json()).then((logs) =>{
+        loggedIn = logs[0];
+        if (loggedIn){
             fetch('/data').then(response => response.json()).then((strings) => {
+                console.log("test");
                 const commentListElement = document.getElementById('comment-container');
                 commentListElement.innerHTML = '';
                 strings.forEach((line) => {
                     commentListElement.appendChild(createListElement(line[0],line[1]));
                 });
             });
+            document.getElementById("login").innerHTML = "<p>Logout <a href=\"" + logs[2] + "\">here</a>.</p>";
         }
         else{
             document.getElementById("form").style.display="none";
             document.getElementById("comment-container").style.display="none";
+            document.getElementById("login").innerHTML = "<p>Login <a href=\"" + logs[1] + "\">here</a>.</p>";
         }
     });
-    
-
 }
 
 function createListElement(email, text) { //examples/stats-server
