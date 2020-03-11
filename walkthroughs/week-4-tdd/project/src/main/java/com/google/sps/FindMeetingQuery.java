@@ -15,6 +15,7 @@
 package com.google.sps;
 
 import java.util.List;
+import java.util.ListIterator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -33,24 +34,32 @@ public final class FindMeetingQuery {
             return Arrays.asList();
         }
 
-        List<TimeRange> times = new ArrayList<>(); 
+        Set<TimeRange> timesSet = new HashSet<>(); 
         Set<String> attendees = new HashSet<>(request.getAttendees());
         for (Event e : events){
             for (String attendee : e.getAttendees()){ 
                 if (attendees.contains(attendee)) //O(1) 
-                    times.add(e.getWhen()); //O(e * att) where e = # of events & att = average # of attendees
+                    timesSet.add(e.getWhen()); //O(e * att) where e = # of events & att = average # of attendees
             }
         }
 
+        List<TimeRange> times = new ArrayList<>(timesSet);
         Collections.sort(times, TimeRange.ORDER_BY_START); //O(nlogn) where n = # of (relevant) events
-        for(int i = 0; i < times.size()-1; i++){ //O(n) where n = # of (relevant) events
-            if (times.get(i).overlaps(times.get(i+1))){
-                int st1 = times.get(i).start(), end1 = times.get(i).end();
-                int st2 = times.get(i+1).start(), end2 = times.get(i+1).end();
-                TimeRange combined = TimeRange.fromStartEnd(st1 < st2 ? st1 : st2, end1 > end2 ? end1 : end2, false);
-                times.remove(i);
-                times.remove(i);
-                times.add(i, combined);
+        if (times.size() > 1){
+            ListIterator<TimeRange> iter = times.listIterator(1);
+            while (iter.hasNext()){ //O(n) where n = # of (relevant) events
+                TimeRange prev = iter.previous();
+                iter.next();
+                TimeRange curr = iter.next();
+                if (prev.overlaps(curr)){
+                    iter.previous();
+                    int st1 = iter.previous().start(), end1 = iter.next().end();
+                    iter.remove();
+                    int st2 = iter.next().start(), end2 = iter.previous().end();
+                    iter.remove();
+                    TimeRange combined = TimeRange.fromStartEnd(st1 < st2 ? st1 : st2, end1 > end2 ? end1 : end2, false);
+                    iter.add(combined);
+                }
             }
         }
 
