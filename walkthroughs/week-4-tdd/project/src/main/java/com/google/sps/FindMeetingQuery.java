@@ -14,10 +14,56 @@
 
 package com.google.sps;
 
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
+import java.util.HashSet;
+
 
 public final class FindMeetingQuery {
-  public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
-    throw new UnsupportedOperationException("TODO: Implement this method.");
-  }
+    public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
+
+        if (request.getAttendees().size() == 0){ 
+            return Arrays.asList(TimeRange.WHOLE_DAY);
+        }
+        if (request.getDuration() > TimeRange.WHOLE_DAY.duration()){ 
+            return Arrays.asList();
+        }
+
+        List<TimeRange> times = new ArrayList<>(); 
+        Set<String> attendees = new HashSet<>(request.getAttendees());
+        for (Event e : events){
+            for (String attendee : e.getAttendees()){ 
+                if (attendees.contains(attendee)) //O(1) 
+                    times.add(e.getWhen()); //O(e * att) where e = # of events & att = average # of attendees
+            }
+        }
+
+        Collections.sort(times, TimeRange.ORDER_BY_START); //O(nlogn) where n = # of (relevant) events
+        for(int i = 0; i < times.size()-1; i++){ //O(n) where n = # of (relevant) events
+            if (times.get(i).overlaps(times.get(i+1))){
+                int st1 = times.get(i).start(), end1 = times.get(i).end();
+                int st2 = times.get(i+1).start(), end2 = times.get(i+1).end();
+                TimeRange combined = TimeRange.fromStartEnd(st1 < st2 ? st1 : st2, end1 > end2 ? end1 : end2, false);
+                times.remove(i);
+                times.remove(i);
+                times.add(i, combined);
+            }
+        }
+
+        List<TimeRange> options = new ArrayList<>();
+        int start = TimeRange.START_OF_DAY;
+        for (int i = 0; i < times.size(); i++){ //O(n) where n = # of (relevant) events
+            if (start != times.get(i).start())
+                options.add(TimeRange.fromStartEnd(start, times.get(i).start(), false));
+            start = times.get(i).end();
+        }
+        if (start < TimeRange.END_OF_DAY){
+            options.add(TimeRange.fromStartEnd(start, TimeRange.END_OF_DAY, true));
+        }
+        return options;
+    }
 }
