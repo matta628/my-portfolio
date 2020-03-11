@@ -14,11 +14,13 @@
 
 package com.google.sps.servlets;
 
+import com.google.sps.data.Comment;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
@@ -40,14 +42,13 @@ import java.util.ArrayList;
             
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Query query = new Query("Comment");
+        Query query = new Query("Comment").addSort("time", SortDirection.ASCENDING);;
         PreparedQuery results = datastore.prepare(query);
         
-        List<String[]> cmts = new ArrayList<>();
+        List<Comment> cmts = new ArrayList<>();
         for (Entity entity : results.asIterable()) {
-            String[] pair = {(String) entity.getProperty("email"),
-                             (String) entity.getProperty("text")};
-            cmts.add(pair);    
+            Comment cmt = new Comment((String)entity.getProperty("email"), (String)entity.getProperty("text"), (long)entity.getProperty("time"));                             
+            cmts.add(cmt);    
         }
         
         Gson gson = new Gson();
@@ -63,14 +64,16 @@ import java.util.ArrayList;
             response.sendRedirect("/index.html");
             return;
         }
+        String email = userService.getCurrentUser().getEmail();
         String text = request.getParameter("comment-input");
         if (text == null) text = "don't be shy.. put some more!";
         else comments.add(text);
-        String email = userService.getCurrentUser().getEmail();
+        long time = System.currentTimeMillis();
 
         Entity commentEntity = new Entity("Comment");
-        commentEntity.setProperty("text", text);
         commentEntity.setProperty("email", email);
+        commentEntity.setProperty("text", text);
+        commentEntity.setProperty("time", time);
         datastore.put(commentEntity);
 
         response.sendRedirect("/index.html");
