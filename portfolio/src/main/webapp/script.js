@@ -50,12 +50,11 @@ function getComments() {
     fetch('/login').then(response => response.json()).then((logs) =>{
         loggedIn = logs[0];
         if (loggedIn){
-            fetch('/data').then(response => response.json()).then((strings) => {
-                console.log("test");
+            fetch('/data').then(response => response.json()).then((cmts) => {
                 const commentListElement = document.getElementById('comment-container');
                 commentListElement.innerHTML = '';
-                strings.forEach((line) => {
-                    commentListElement.appendChild(createListElement(line[0],line[1]));
+                cmts.forEach((cmt) => {
+                    commentListElement.appendChild(createListElement(cmt.email,cmt.text));
                 });
             });
             document.getElementById("login").innerHTML = "<p>Logout <a href=\"" + logs[2] + "\">here</a>.</p>";
